@@ -17,10 +17,10 @@ public class EmployeePayrollService
 	 * To get the list of employee payroll from the database
 	 */
 	public List<EmployeePayrollData> employeePayrollList;
-	private EmployeePayrollDBservice employeePayrollDBService;
+	private EmployeePayrollDBService employeePayrollDBService;
 
 	public EmployeePayrollService() {
-		employeePayrollDBService = EmployeePayrollDBservice.getInstance();
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
 	}
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
