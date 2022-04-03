@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollDBservice 
 {
@@ -40,16 +42,8 @@ public class EmployeePayrollDBservice
 	 * @return
 	 */
 	public List<EmployeePayrollData> readData() {
-		String sql = "SELECT * FROM employee_payroll";
-		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
-		try (Connection connection = this.getConnection();) {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);
-			employeePayrollList = this.getEmployeePayrollData(resultSet);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return employeePayrollList;
+		String sql = "SELECT * FROM employee_payroll;";
+		return this.getEmployeePayrollDataUsingSQLQuery(sql);
 	}
 
 	/**
@@ -81,6 +75,24 @@ public class EmployeePayrollDBservice
 		try {
 			employeePayrollDataStatement.setString(1, name);
 			ResultSet resultSet = employeePayrollDataStatement.executeQuery();
+			employeePayrollList = this.getEmployeePayrollData(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollList;
+	}
+
+	/**
+	 * get the list of EmployeePayrollData Using the SQLQuery(
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public List<EmployeePayrollData> getEmployeePayrollDataUsingSQLQuery(String sql) {
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
 			employeePayrollList = this.getEmployeePayrollData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -164,6 +176,41 @@ public class EmployeePayrollDBservice
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	/**
+	 * to retrieve all employees who have joined in a particular data range
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return employee list in given date range
+	 */
+	public List<EmployeePayrollData> getEmployeesInGivenDateRangeDB(String date1, String date2) {
+		String sql = String.format("SELECT * FROM employee_payroll where start between '%s' AND '%s';", date1, date2);
+		return this.getEmployeePayrollDataUsingSQLQuery(sql);
+	}
+
+	/**
+	 * get the average salary group by the gender using hashmap that contains the
+	 * key and value pair
+	 * 
+	 * @return
+	 */
+	public Map<String, Double> getAverageSalaryByGender() {
+		String sql = "SELECT gender,AVG(salary) FROM employee_payroll GROUP BY gender;";
+		Map<String, Double> genderToAvgSalaryMap = new HashMap<String, Double>();
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				String gender = resultSet.getString("gender");
+				double salary = resultSet.getDouble("AVG(salary)");
+				genderToAvgSalaryMap.put(gender, salary);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return genderToAvgSalaryMap;
 	}
 
 	/**

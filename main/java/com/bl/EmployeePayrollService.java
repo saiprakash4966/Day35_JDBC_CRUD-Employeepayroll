@@ -2,6 +2,7 @@ package com.bl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.bl.EmployeePayrollDBservice.StatementType;
@@ -131,5 +132,21 @@ public class EmployeePayrollService
 		List<EmployeePayrollData> checkList = employeePayrollDBService.getEmployeePayrollData(name);
 		return checkList.get(0).equals(getEmployeePayrollData(name));
 
+	}
+	
+	/**
+	 * Retrieve the data for a particular date range
+	 * @param date1
+	 * @param date2
+	 * @returns
+	 */
+	public List<EmployeePayrollData> getEmployeesInDateRange(String date1, String date2) {
+		List<EmployeePayrollData> employeesInGivenDateRangeList = employeePayrollDBService.getEmployeesInGivenDateRangeDB(date1,date2);
+		return employeesInGivenDateRangeList;
+	}
+
+	public Map<String, Double> readAverageSalaryByGender(IOService dbIo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
